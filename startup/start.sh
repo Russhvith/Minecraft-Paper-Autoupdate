@@ -4,6 +4,9 @@ MINECRAFT_VERSION=1.19.3
 PROJECT=paper
 AUTO_UPDATE_JAR=true
 
+RAM_PROVIDED=8192
+USE_AIKAR_FLAGS=true
+
 echo -e ""
 echo -e "Using Russ Auto Updater Skript"
 echo -e ""
@@ -30,4 +33,10 @@ if [ "${AUTO_UPDATE_JAR}" == "true" ]; then
         curl -o ${JAR_NAME} ${DOWNLOAD_URL} 
 fi
 
-./mcstart.sh
+
+echo -e "Starting Minecraft Server"
+if [ "${USE_AIKAR_FLAGS}" == "true" ]; then
+        java -Xms${RAM_PROVIDED}M -Xmx${RAM_PROVIDED}M --add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -jar ${JAR_NAME} --nogui
+else
+        java -Xms128M -Xmx${RAM_PROVIDED}M -Dterminal.jline=false -Dterminal.ansi=true -jar ${JAR_NAME}
+fi
